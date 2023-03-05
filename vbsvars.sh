@@ -23,17 +23,23 @@ recovery() {
     fi
 }
 
+# Tested on 03/06/2023
 setuputils() {
     dnf --assumeyes install epel-release
     dnf --assumeyes update
-    dnf --assumeyes install nano htop sqlite wget cronie git
+    dnf --assumeyes install nano htop sqlite wget cronie git mc
+    # Test: libguestfs virt-win-reg - installed, very starnge dependencies
     dnf --assumeyes install libguestfs libguestfs-tools
+    # Set locale to en_US.UTF-8 instead of C.UTF-8
     dnf --assumeyes install glibc-all-langpacks
+    localectl set-locale LANG=en_US.UTF-8
     dnf --assumeyes install hypervvssd hypervkvpd hyperv-tools hyperv-daemons
     dnf --assumeyes install zram-generator
     systemctl start crond
+    # Reboot required
 }
 
+# Tested on 03/06/2023
 makepartitions() {
     sgdisk -n 0:0:0 -t 0:8300 /dev/sdb
     sleep 10
@@ -46,23 +52,26 @@ makepartitions() {
     mount -a
     sleep 10
     mkdir /mnt/sdb1/backups
-    chown -R urbackup:urbackup /mnt/sdb1/backups    
 }
 
+# Tested on 03/06/2023
 setupurbackup() {
     repo="https://download.opensuse.org/repositories/home:uroni/Fedora_Rawhide/home:uroni.repo"
     dnf config-manager --add-repo $repo
     dnf update
-    dnf --assumeyes install urbackup-server
+    # Test: libstdc++.so.6(GLIBCXX_3.4.30)(64bit) needed by urbackup-server-2.5.30.0-1.1.x86_64
+    dnf --assumeyes --nobest install urbackup-server
+    chown -R urbackup:urbackup /mnt/sdb1/backups
     systemctl enable urbackup-server
     mkhomedir_helper urbackup
     ls /home/urbackup/ -aghl
 }
 
+# Tested on 03/06/2023
 configurbackup() {
     service="/usr/lib/systemd/system/urbackup-server.service"
     cat $service
-    sed -i '/\[Service\]/a ExecStartPre=/bin/sleep 10' $service
+    sed -i '/\[Service\]/a ExecStartPre=/bin/sleep 60' $service
     mkdir /etc/urbackup
     echo "/mnt/sdb1/backups" >> /etc/urbackup/backupfolder
     chown urbackup:urbackup /etc/urbackup/backupfolder
