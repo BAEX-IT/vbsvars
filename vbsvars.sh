@@ -24,11 +24,13 @@ recovery() {
 }
 
 setuputils() {
+    dnf --assumeyes install epel-release
     dnf --assumeyes update
     dnf --assumeyes install nano htop sqlite wget cronie git
-    dnf --assumeyes install epel-release
     dnf --assumeyes install libguestfs libguestfs-tools
+    dnf --assumeyes install glibc-all-langpacks
     dnf --assumeyes install hypervvssd hypervkvpd hyperv-tools hyperv-daemons
+    dnf --assumeyes install zram-generator
     systemctl start crond
 }
 
@@ -78,7 +80,7 @@ configfirewall() {
 
 configsystemd() {
     vm_conf_file='/etc/sysctl.d/20-custom.conf'
-    echo "# Custom settings for VM
+    echo "# Custom settings for systemd
     vm.swappiness=10
     vm.vfs_cache_pressure=50
     vm.dirty_background_ratio=5
