@@ -2,7 +2,7 @@
 
 drop() {
     sync && echo 3 > /proc/sys/vm/drop_caches
-    echo "Cache dropped." > vbsvars.log
+    date +%s > /var/log/vbsvars-drop.log
 }
 
 recover() {
@@ -14,6 +14,7 @@ recover() {
         urbackupsrv defrag-database
         urbackupsrv cleanup-unknown
         systemctl start urbackupsrv.service
+        date +%s > /var/log/vbsvars-recover.log
     fi
 }
 

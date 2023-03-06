@@ -3,7 +3,7 @@
 Virtual Backup Server setup, configuration, and maintenance scripts
 
 ```bash
-vbsvars.sh dropcaches
+vbsvars.sh drop
 ```
 
 Sync dta to disk and drop cache in memory.
