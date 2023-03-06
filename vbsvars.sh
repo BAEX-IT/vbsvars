@@ -13,8 +13,8 @@ recover() {
         urbackupsrv repair-database
         urbackupsrv defrag-database
         urbackupsrv cleanup-unknown
-        systemctl start urbackupsrv.service
         date +%s > /var/log/vbsvars-recover.log
+        init 6
     fi
 }
 
