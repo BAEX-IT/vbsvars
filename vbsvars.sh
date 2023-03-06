@@ -1,21 +1,15 @@
 #!/usr/bin/bash
 
-func() {
-    echo Hello!
-}
-
-# MAINTENANCE
-
-dropcaches() {
+drop() {
     sync && echo 3 > /proc/sys/vm/drop_caches
     echo "Cache dropped." > vbsvars.log
 }
 
-recovery() {
+recover() {
     if [`pidof urbackupsrv` -z "$1"];
     then
         systemctl stop urbackupsrv.service
-        dropcaches
+        drop
         urbackupsrv repair-database
         urbackupsrv defrag-database
         urbackupsrv cleanup-unknown
@@ -24,7 +18,7 @@ recovery() {
 }
 
 # Tested on 03/06/2023
-setuputils() {
+dependencies() {
     dnf --assumeyes install epel-release
     dnf --assumeyes update
     dnf --assumeyes install nano htop sqlite wget cronie git mc
@@ -40,7 +34,7 @@ setuputils() {
 }
 
 # Tested on 03/06/2023
-makepartitions() {
+partition() {
     sgdisk -n 0:0:0 -t 0:8300 /dev/sdb
     sleep 10
     mkfs.ext4 -G 4096 /dev/sdb1
@@ -55,7 +49,8 @@ makepartitions() {
 }
 
 # Tested on 03/06/2023
-setupurbackup() {
+urbackup() {
+    # Server installation
     repo="https://download.opensuse.org/repositories/home:uroni/Fedora_Rawhide/home:uroni.repo"
     dnf config-manager --add-repo $repo
     dnf update
@@ -65,10 +60,7 @@ setupurbackup() {
     systemctl enable urbackup-server
     mkhomedir_helper urbackup
     ls /home/urbackup/ -aghl
-}
-
-# Tested on 03/06/2023
-configurbackup() {
+    # Server post-installation configuration
     service="/usr/lib/systemd/system/urbackup-server.service"
     cat $service
     sed -i '/\[Service\]/a ExecStartPre=/bin/sleep 60' $service
@@ -78,7 +70,7 @@ configurbackup() {
     systemctl daemon-reload
 }
 
-configfirewall() {
+firewall() {
     firewall-cmd --add-port=55415/tcp
     firewall-cmd --add-port=55414/tcp
     firewall-cmd --add-port=55413/tcp
@@ -87,16 +79,32 @@ configfirewall() {
     firewall-cmd --list-ports
 }
 
-configsystemd() {
-    vm_conf_file='/etc/sysctl.d/20-custom.conf'
-    echo "# Custom settings for systemd
-    vm.swappiness=10
-    vm.vfs_cache_pressure=50
-    vm.dirty_background_ratio=5
-    vm.dirty_ratio=10
-    vm.min_free_kbytes=262144
-    " > $vm_conf_file
+systemd() {
+    vm='/etc/sysctl.d/20-custom.conf'
+    echo "# Custom settings for systemd" > $vm
+    echo "vm.swappiness=10" >> $vm
+    echo "vm.vfs_cache_pressure=50" >> $vm
+    echo "vm.dirty_background_ratio=5" >> $vm
+    echo "vm.dirty_ratio=10" >> $vm
+    echo "vm.min_free_kbytes=262144" >> $vm
     sysctl --system
+}
+
+# Tested on 03/06/2023
+ip() {
+    # Usage: ip ipaddress subnet gateway
+    # Example: ip 192.168.1.2 24 192.168.1.1 
+    nmcli connection modify eth0 IPv4.address $1/$2
+    nmcli connection modify eth0 IPv4.gateway $3
+    nmcli connection modify eth0 IPv4.dns 8.8.8.8,8.8.4.4
+    nmcli connection modify eth0 IPv4.method manual
+    # Offloading disable below
+    nmcli connection modify eth0 ethtool.feature-gro off
+    nmcli connection modify eth0 ethtool.feature-lro off
+    nmcli connection modify eth0 ethtool.feature-gso off
+    nmcli connection modify eth0 ethtool.feature-tso off
+    # Reload connection
+    nmcli connection down eth0 && nmcli connection up eth0
 }
 
 "$@"
