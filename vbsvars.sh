@@ -31,6 +31,11 @@ dependencies() {
     dnf --assumeyes install hypervvssd hypervkvpd hyperv-tools hyperv-daemons
     dnf --assumeyes install zram-generator
     systemctl start crond
+    # Install Zabbix Agent 2
+    rpm -Uvh https://repo.zabbix.com/zabbix/6.0/rhel/9/x86_64/zabbix-release-6.0-4.el9.noarch.rpm
+    dnf --assumeyes install zabbix-agent2
+    systemctl enable zabbix-agent2
+    systemctl start zabbix-agent2
     # Reboot required
 }
 
@@ -72,10 +77,14 @@ urbackup() {
 }
 
 firewall() {
+    # urBackup Server rules
     firewall-cmd --add-port=55415/tcp
     firewall-cmd --add-port=55414/tcp
     firewall-cmd --add-port=55413/tcp
     firewall-cmd --add-port=35623/udp
+    # Zabbix Agent 2
+    firewall-cmd --add-port=10050/tcp
+    # Make settings permanent
     firewall-cmd --runtime-to-permanent
     firewall-cmd --list-ports
 }
