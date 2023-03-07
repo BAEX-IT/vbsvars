@@ -1,0 +1,2 @@
+*/30 * * * * /usr/bin/flock -n /tmp/vbsvars.lock /vbsvars/vbsvars.sh drop
+*/30 * * * * /usr/bin/flock -n /tmp/vbsvars.lock /vbsvars/vbsvars.sh recover

@@ -94,7 +94,8 @@ systemd() {
 # Tested on 03/06/2023
 ip() {
     # Usage: ip ipaddress subnet gateway
-    # Example: ip 192.168.1.2 24 192.168.1.1 
+    # Example: ip 192.168.1.2 24 192.168.1.1 vbs.domain.com
+    hostnamectl set-hostname $4
     nmcli connection modify eth0 IPv4.address $1/$2
     nmcli connection modify eth0 IPv4.gateway $3
     nmcli connection modify eth0 IPv4.dns 8.8.8.8,8.8.4.4

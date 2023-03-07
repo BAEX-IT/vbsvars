@@ -2,11 +2,15 @@
 
 Virtual Backup Server setup, configuration, and maintenance scripts
 
+## Download scripts
+
 ```bash
-vbsvars.sh drop
+git clone https://github.com/artyomtsybulkin/vbsvars.git /var
+chmod +x /var/vbsvars/vbsvars.sh
+crontab /var/vbsvars/tasks.txt
 ```
 
-Sync dta to disk and drop cache in memory.
+## Setup sequence
 
 Update after some tests on 03/06/2023
 ```bash
@@ -20,5 +24,13 @@ sh vbsvars.sh urbackup
 sh vbsvars.sh systemd
 sh vbsvars.sh firewall
 # Step 5: Confiure static IP
-sh vbsvars.sh ip 192.168.1.2 24 192.168.1.1
+sh vbsvars.sh ip 192.168.1.2 24 192.168.1.1 vbs.domain.com
+```
+
+## Maintenance
+
+Sync data to disk and drop cache in memory or recover if porcess failed.
+```bash
+vbsvars.sh drop
+vbsvars.sh recover
 ```
