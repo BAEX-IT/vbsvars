@@ -52,12 +52,13 @@ partition() {
     mount -a
     sleep 10
     mkdir /mnt/sdb1/backups
+    systemctl daemon-reload
 }
 
 # Tested on 03/06/2023
 urbackup() {
     # Server installation
-    repo="https://download.opensuse.org/repositories/home:uroni/Fedora_Rawhide/home:uroni.repo"
+    repo="https://download.opensuse.org/repositories/home:uroni/Fedora_36/home:uroni.repo"
     dnf config-manager --add-repo $repo
     dnf update
     # Test: libstdc++.so.6(GLIBCXX_3.4.30)(64bit) needed by urbackup-server-2.5.30.0-1.1.x86_64
