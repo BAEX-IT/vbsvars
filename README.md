@@ -5,7 +5,7 @@ Virtual Backup Server setup, configuration, and maintenance scripts
 ## Download scripts
 
 ```bash
-git clone https://github.com/artyomtsybulkin/vbsvars.git /var
+cd /var && git clone https://github.com/BAEX-IT/vbsvars.git
 chmod +x /var/vbsvars/vbsvars.sh
 chmod +x /var/vbsvars/status.sh
 crontab /var/vbsvars/tasks.txt
@@ -22,12 +22,13 @@ Step 4: Define systemd and firewall settings
 Step 5: Confiure static IP and host name
 
 ```bash
-sh vbsvars.sh dependencies
-sh vbsvars.sh partition
-sh vbsvars.sh urbackup
-sh vbsvars.sh systemd
-sh vbsvars.sh firewall
-sh vbsvars.sh ip 192.168.1.2 24 192.168.1.1 vbs.domain.com
+cd /var/vbsvars/
+./vbsvars.sh dependencies
+./vbsvars.sh partition
+./vbsvars.sh urbackup
+./vbsvars.sh systemd
+./vbsvars.sh firewall
+./vbsvars.sh ip 192.168.1.2 24 192.168.1.1 vbs.domain.com
 ```
 
 ## Maintenance
