@@ -5,6 +5,7 @@ Virtual Backup Server setup, configuration, and maintenance scripts
 ## Download scripts
 
 ```bash
+dnf update && dnf install git -y
 cd /var && git clone https://github.com/BAEX-IT/vbsvars.git
 chmod +x /var/vbsvars/vbsvars.sh
 chmod +x /var/vbsvars/status.sh

@@ -22,7 +22,7 @@ recover() {
 dependencies() {
     dnf --assumeyes install epel-release
     dnf --assumeyes update
-    dnf --assumeyes install nano htop sqlite wget cronie git mc
+    dnf --assumeyes install nano htop sqlite wget cronie mc
     # Test: libguestfs virt-win-reg - installed, very starnge dependencies
     dnf --assumeyes install libguestfs libguestfs-tools
     # Set locale to en_US.UTF-8 instead of C.UTF-8
