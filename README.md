@@ -36,6 +36,6 @@ cd /var/vbsvars/
 
 Sync data to disk and drop cache in memory or recover if porcess failed.
 ```bash
-vbsvars.sh drop
-vbsvars.sh recover
+./vbsvars.sh drop
+./vbsvars.sh recover
 ```

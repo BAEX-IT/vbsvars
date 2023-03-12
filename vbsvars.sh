@@ -2,6 +2,7 @@
 
 drop() {
     sync && echo 3 > /proc/sys/vm/drop_caches
+    # Write timestamp to log file
     date +%s > /var/log/vbsvars-drop.log
 }
 
@@ -13,6 +14,7 @@ recover() {
         urbackupsrv repair-database
         urbackupsrv defrag-database
         urbackupsrv cleanup-unknown
+        # Write timestamp to log file
         date +%s > /var/log/vbsvars-recover.log
         init 6
     fi
@@ -58,10 +60,10 @@ partition() {
 # Tested on 03/06/2023
 urbackup() {
     # Server installation
-    repo="https://download.opensuse.org/repositories/home:uroni/Fedora_36/home:uroni.repo"
+    repo="https://download.opensuse.org/repositories/home:uroni/Fedora_Rawhide/home:uroni.repo"
     dnf config-manager --add-repo $repo
     dnf update
-    # Test: libstdc++.so.6(GLIBCXX_3.4.30)(64bit) needed by urbackup-server-2.5.30.0-1.1.x86_64
+    # --nobest for: libstdc++.so.6(GLIBCXX_3.4.30)(64bit) needed by urbackup-server-2.5.30.0-1.1.x86_64
     dnf --assumeyes --nobest install urbackup-server
     chown -R urbackup:urbackup /mnt/sdb1/backups
     systemctl enable urbackup-server

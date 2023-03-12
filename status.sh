@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Variables setup
-HOST="status.dataengarde.com"
+HOST="status.domain.com"
 PORT=7521
-USER="foreachstatus"
-PASS="xhaG4wUBDdnTmx6seFlFrvrE"
+USER="user"
+PASS="1234567890"
 NODE=`hostname`
 LOCAL_PATH="/tmp/clients_$NODE.csv"
 SERVER_PATH="/home/foreachstatus/ftp/clients_$NODE.csv"
